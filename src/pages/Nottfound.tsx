@@ -1,0 +1,33 @@
+import { Link } from "react-router-dom";
+import React from "react";
+function Nottfound() {
+  return (
+    <div className="fixed inset-0 flex items-center justify-center z-30 bg-white ">
+      <div className="px-4 lg:py-12">
+        <div className="lg:gap-4 lg:flex">
+          <div className="flex flex-col items-center justify-center md:py-24 lg:py-32">
+            <h1 className="font-bold text-[#17B67C] text-9xl">404</h1>
+            <p className="mb-2 text-2xl font-bold text-center  md:text-3xl">
+              <span className="text-red-500">Oops!</span>{" "}
+              <span>Page not found</span>
+            </p>
+            <p className="mb-8 text-center md:text-lg">
+              The page you’re looking for doesn’t exist.
+            </p>
+            <Link
+              to="/"
+              onClick={() => {
+                localStorage.removeItem("currentRoom");
+              }}
+              className="bg-[#17B67C] p-3 rounded-md text-white text-lg"
+            >
+              Room Page
+            </Link>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export default Nottfound;

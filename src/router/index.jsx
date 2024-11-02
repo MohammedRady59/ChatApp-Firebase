@@ -9,6 +9,7 @@ import Chat from "../pages/Chat";
 import Room from "../pages/Room";
 import CookieServices from "../service/CookieServices";
 import ProtectRouter from "../Auth/ProtectRouter";
+import Nottfound from "../pages/Nottfound";
 
 const isAllow = CookieServices.get("tokenFire");
 export const router = createBrowserRouter(
@@ -38,6 +39,7 @@ export const router = createBrowserRouter(
           </ProtectRouter>
         }
       ></Route>
+      <Route path="*" element={<Nottfound />}></Route>
     </Route>
   )
 );
