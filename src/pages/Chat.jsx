@@ -77,7 +77,13 @@ function Chat() {
         </div>
         <div className="w-3/4 mx-auto border-[10px] py-2 pt-0 px-2 rounded-2xl border-[#EBF4F3]  ">
           <div className="flex  items-center rounded-2xl justify-between  p-2 flex-wrap ">
-            <span className="cursor-pointer" onClick={() => navgite(-1)}>
+            <span
+              className="cursor-pointer"
+              onClick={() => {
+                navgite(-1);
+                localStorage.removeItem("currentRoom");
+              }}
+            >
               {" "}
               <MoveLeft />
             </span>
