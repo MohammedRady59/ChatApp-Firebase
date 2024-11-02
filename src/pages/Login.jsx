@@ -24,7 +24,7 @@ function Login() {
         },
       });
       setTimeout(() => {
-        location.replace("/room");
+        location.replace("/");
       }, 2000);
     } catch (error) {
       toast.error(`Error Message`, {
