@@ -30,6 +30,7 @@ function Chat() {
     CookieServices.remove("tokenFire");
     dispatch(signoutFromacc());
     location.replace("/");
+    localStorage.removeItem("currentRoom");
   }
   useEffect(() => {
     localStorage.setItem("currentRoom", nameRoom);

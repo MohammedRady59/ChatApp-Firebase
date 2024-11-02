@@ -25,6 +25,7 @@ function Room() {
   function logout() {
     CookieServices.remove("tokenFire");
     dispatch(signoutFromacc());
+    localStorage.removeItem("currentRoom");
     location.replace("/");
   }
   return (
