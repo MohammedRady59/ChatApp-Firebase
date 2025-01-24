@@ -8,7 +8,7 @@ import {
 } from "firebase/firestore";
 import { EllipsisVertical, MoveLeft, Send } from "lucide-react";
 import { useEffect, useState } from "react";
-import { auth, db } from "../config/firebase";
+import { auth, db } from "../config/firebase"; // تأكد أن config/firebase يحتوي على إعدادات Firebase الخاصة بك
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { signoutFromacc } from "../redux/feature/Room/roomSlice";
@@ -19,28 +19,32 @@ function Chat() {
   const dispatch = useDispatch();
   const [newMessage, setMessage] = useState("");
   const [messagesApp, setMessages] = useState([]);
-  const navgite = useNavigate();
+  const navigate = useNavigate();
 
   const currentUser = auth.currentUser?.displayName;
   const msgModel = collection(db, "Message");
 
   const nameRoom = localStorage.getItem("currentRoom") || roomFromRedux;
 
+  // وظيفة تسجيل الخروج
   function logout() {
     CookieServices.remove("tokenFire");
     dispatch(signoutFromacc());
     location.replace("/");
     localStorage.removeItem("currentRoom");
   }
+
+  // استرجاع الرسائل عند تحميل الصفحة
   useEffect(() => {
     localStorage.setItem("currentRoom", nameRoom);
 
     const queryMsg = query(msgModel, where("room", "==", nameRoom));
-    const subcribe = onSnapshot(queryMsg, (snapshot) => {
+    const subscribe = onSnapshot(queryMsg, (snapshot) => {
       let messages = [];
       snapshot.forEach((el) => {
         messages.push({ ...el.data(), id: el.id });
       });
+      // ترتيب الرسائل حسب الوقت
       messages.sort(
         (a, b) =>
           (a.createAt ? a.createAt.seconds : 0) -
@@ -49,12 +53,21 @@ function Chat() {
 
       setMessages(messages);
     });
-    return () => subcribe();
-  }, []);
+
+    return () => subscribe();
+  }, [nameRoom]);
+
+  // إرسال رسالة جديدة
   async function handelChat(e) {
     e.preventDefault();
-    console.log(newMessage);
     if (newMessage === "") return;
+
+    // التأكد من أن المستخدم مسجل الدخول
+    if (!auth.currentUser) {
+      alert("يجب عليك تسجيل الدخول");
+      return;
+    }
+
     await addDoc(msgModel, {
       text: newMessage,
       createAt: serverTimestamp(),
@@ -63,10 +76,11 @@ function Chat() {
     });
     setMessage("");
   }
+
   return (
     <>
-      <div className=" w-full h-screen flex items-center justify-center relative ">
-        <div className="absolute right-0 md:top-1/4 top-0 m-4 ">
+      <div className="w-full h-screen flex items-center justify-center relative">
+        <div className="absolute right-0 md:top-1/4 top-0 m-4">
           <button
             type="button"
             onClick={() => logout()}
@@ -75,19 +89,19 @@ function Chat() {
             Sign Out
           </button>
         </div>
-        <div className="w-3/4 mx-auto border-[10px] py-2 pt-0 px-2 rounded-2xl border-[#EBF4F3]  ">
-          <div className="flex  items-center rounded-2xl justify-between  p-2 flex-wrap ">
+        <div className="w-3/4 mx-auto border-[10px] py-2 pt-0 px-2 rounded-2xl border-[#EBF4F3]">
+          <div className="flex items-center rounded-2xl justify-between p-2 flex-wrap">
             <span
               className="cursor-pointer"
               onClick={() => {
-                navgite(-1);
+                navigate(-1);
                 localStorage.removeItem("currentRoom");
               }}
             >
               {" "}
               <MoveLeft />
             </span>
-            <h2 className="font-medium md:text-xl text-center ">{nameRoom}</h2>
+            <h2 className="font-medium md:text-xl text-center">{nameRoom}</h2>
             <EllipsisVertical />
           </div>
           <div className="overflow-y-auto max-h-96">
@@ -111,10 +125,10 @@ function Chat() {
               </div>
             ))}
           </div>
-          <div className="pt-10 ">
-            <form className="w-full mx-auto" onSubmit={(e) => handelChat(e)}>
+          <div className="pt-10">
+            <form className="w-full mx-auto" onSubmit={handelChat}>
               <div className="relative">
-                <button className="absolute inset-y-0 right-0 flex items-center pr-3.5  cursor-pointer">
+                <button className="absolute inset-y-0 right-0 flex items-center pr-3.5 cursor-pointer">
                   <Send color="#17B67C" />
                 </button>
                 <input
@@ -122,7 +136,7 @@ function Chat() {
                   value={newMessage}
                   onChange={(e) => setMessage(e.target.value)}
                   id="email-address-icon"
-                  className="bg-gray-50 border  border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full pr-10 p-2.5  "
+                  className="bg-gray-50 border  border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full pr-10 p-2.5"
                   placeholder="Write Message..."
                 />
               </div>
