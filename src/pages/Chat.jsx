@@ -8,7 +8,7 @@ import {
 } from "firebase/firestore";
 import { EllipsisVertical, MoveLeft, Send } from "lucide-react";
 import { useEffect, useState } from "react";
-import { auth, db } from "../config/firebase"; // تأكد أن config/firebase يحتوي على إعدادات Firebase الخاصة بك
+import { auth, db } from "../config/firebase";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { signoutFromacc } from "../redux/feature/Room/roomSlice";
@@ -26,7 +26,6 @@ function Chat() {
 
   const nameRoom = localStorage.getItem("currentRoom") || roomFromRedux;
 
-  // وظيفة تسجيل الخروج
   function logout() {
     CookieServices.remove("tokenFire");
     dispatch(signoutFromacc());
@@ -34,7 +33,6 @@ function Chat() {
     localStorage.removeItem("currentRoom");
   }
 
-  // استرجاع الرسائل عند تحميل الصفحة
   useEffect(() => {
     localStorage.setItem("currentRoom", nameRoom);
 
@@ -44,7 +42,6 @@ function Chat() {
       snapshot.forEach((el) => {
         messages.push({ ...el.data(), id: el.id });
       });
-      // ترتيب الرسائل حسب الوقت
       messages.sort(
         (a, b) =>
           (a.createAt ? a.createAt.seconds : 0) -
@@ -57,12 +54,10 @@ function Chat() {
     return () => subscribe();
   }, [nameRoom]);
 
-  // إرسال رسالة جديدة
   async function handelChat(e) {
     e.preventDefault();
     if (newMessage === "") return;
 
-    // التأكد من أن المستخدم مسجل الدخول
     if (!auth.currentUser) {
       alert("يجب عليك تسجيل الدخول");
       return;
